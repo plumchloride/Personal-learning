@@ -1,0 +1,27 @@
+header{
+    padding: 5px 0;
+    background-color: #666;
+}
+footer{
+    background-color: #666;
+    padding:5px 0px;
+    width:100%;
+    position: absolute;
+    bottom: 0px;
+}
+canvas{
+    background-color: #CCC;
+}
+.text-white{
+    color:#FFF;
+}
+.pe-2{
+    padding-right: 2px;
+}
+.ta-center{
+    text-align: center;
+}
+.a-center{
+    width:400px;
+    margin: 10px auto;
+};
