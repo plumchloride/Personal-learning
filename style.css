@@ -10,7 +10,8 @@ footer{
     bottom: 0px;
 }
 canvas{
-    background-color: #CCC;
+    border: 10px solid;
+    border-color: #666;
 }
 .sns-link :hover{
     color: #7194b8;
