@@ -12,6 +12,9 @@ footer{
 canvas{
     background-color: #CCC;
 }
+.sns-link :hover{
+    color: #7194b8;
+}
 .text-white{
     color:#FFF;
 }
