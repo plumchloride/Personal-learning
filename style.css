@@ -12,9 +12,17 @@ footer{
 }
 body{
     margin: 0px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 canvas{
     border: solid black 2px;
+}
+#information{
+    margin-top: 0px;
+    padding-left: 70%;
+    font-size: 30px;
 }
 .text-white{
     color:#FFF;
