@@ -1,7 +1,14 @@
 let canvas,width,height,ctx;
 let count = 0;
-let flag = {"canv":false,"start":false}
+let flag = {"canv":false,"start":false,"lv1s":false}
 let start_count;
+//画面設定 100px*100pxごと
+let window_pic = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],]
 
 //fps 決定部分
 let fps_in = 30;
@@ -63,8 +70,13 @@ const load = (ctx)=>{
 //アニメーション呼び出し部分
 const tick = ()=>{
   if(flag.canv){
-    if(flag.start == true){
+    if(flag.start == true){//タイトルからゲーム画面への画面遷移
       movestart()
+    }
+    if(flag.start=="end"){
+      lv1();
+
+
     }
     count++;
   }
@@ -106,6 +118,43 @@ const movestart = () => {
     ctx.fillRect(0, height/2 , width, (step_count-200)*2);
   }
 }
+
+//アニメーション：レベル1
+const lv1 =()=>{
+  //初回のみ床の設定
+  if(!flag.lv1s){
+    window_pic[5] = [...Array(20).keys()].map(()=>{return 1});
+    flag.lv1s = true
+  }
+  //設置物処理
+  if(count % 5){
+
+  }
+  //配置物を消す
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, width, height);
+  put_block(window_pic)
+}
+
+
+
+
+
+
+//ブロックの配置
+const put_block = (pic)=>{
+  pic.forEach((cv_,y,notUse)=>{
+    cv_.forEach((cv2,x,notUse2,index)=>{
+      if(x<10){
+        if(cv2==1){
+          ctx.fillStyle = "#666";
+          ctx.fillRect(100*x - count % 5, 100*y, 100, 100);
+        }
+      }
+    })
+  })
+}
+
 
 //線を引く
 const line_make = (ctx,start_x , start_y,end_x,end_y)=>{
