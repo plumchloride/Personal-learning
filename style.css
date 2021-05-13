@@ -1,6 +1,7 @@
 header{
     padding: 5px 0;
     background-color: #666;
+    font-family: cursive,serif;
 }
 footer{
     background-color: #666;
@@ -9,8 +10,11 @@ footer{
     position: absolute;
     bottom: 0px;
 }
+body{
+    margin: 0px;
+}
 canvas{
-    background-color: #CCC;
+    border: solid black 2px;
 }
 .text-white{
     color:#FFF;
@@ -18,10 +22,13 @@ canvas{
 .pe-2{
     padding-right: 2px;
 }
+.sns-link :hover{
+    color: #3e88c9;
+}
 .ta-center{
     text-align: center;
 }
 .a-center{
-    width:400px;
+    width: 1000px;
     margin: 10px auto;
 };
