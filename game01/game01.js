@@ -1,5 +1,6 @@
 let canvas,width,height,ctx,player;
 let count = 0;
+let jump_ste = false;
 let flag = {"canv":false,"start":false,"lv1s":false}
 let start_count;
 let game = true;
@@ -29,7 +30,7 @@ const fps_req = ()=>{
 
 //fps表示変更
 const inf = document.getElementById("information");
-inf.innerHTML = "fps:"+fps_in;
+inf.innerHTML = "fps:"+fps_in+" death:"+death;
 //fpsによるゲームの速度調整(30を基本とした設定)
 let fps_speed = 30 / fps_in
 
@@ -196,28 +197,39 @@ class Player{
         this.max_jump = 270;
         this.situation = "none";
         this.ongrand = true;
+        this.before_jump = false;
+        this.jump_fre = 0
     }
-    jumpcall(){
-        if(this.jump_num==false && this.ongrand){
-            this.jump_num = this.max_jump;
-        }
-    }
+    // jumpcall(){
+    //     if(this.jump_num==false && this.ongrand){
+    //         this.jump_num = this.max_jump;
+    //     }
+    // }
     jump(){
         //ジャンプ処理
-        if(this.jump_num!=false){
-            console.log(this.jump_num);
-            this.jump_num -= this.jump_speed;
-            this.y -= this.jump_speed;
-            if(this.jump_num <0 && this.ongrand){
-                this.jump_num = false;
+        if(jump_ste){
+            if(this.jump_fre<=18 && !this.before_jump){
+                this.y -= this.jump_speed;
+                this.jump_fre ++;
+            }else if(this.jump_fre>=36){
+                this.jump_fre = 0
+            }else{
+                this.jump_fre ++;
+                this.before_jump = true;
             }
+        }else if(this.ongrand){
+            this.jump_fre = 0;
+        }else{
+            this.before_jump = true;
         }
     }
     show(){
         this.jump();
         //着地処理
-        if(this.jump_num==false && !this.ongrand){
-            this.y += this.fall_speed;
+        if(!this.ongrand){
+            if(!jump_ste || this.before_jump){
+                this.y += this.fall_speed;
+            }
         }
         //描画
         ctx.fillStyle = "#f00";
@@ -225,7 +237,6 @@ class Player{
     }
     colide(list,things){
         var _inside = false;
-        var _ceiling = false;
         var _ongrand = false;
         list.forEach((cv)=>{
             var co;
@@ -235,10 +246,6 @@ class Player{
                     this.situation = "inside"
                     _inside = true;
                 }
-                if(co[1]<this.y-80 && this.y-80<co[3]){
-                    this.situation = "ceiling"
-                    _ceiling = true;
-                }
                 if(things == "map_block"){
                     if(co[1]<this.y && this.y<co[3]){
                         this.ongrand = true;
@@ -246,18 +253,18 @@ class Player{
                     }
             }}
         });
-        if(!_ongrand)this.ongrand = false;
+        if(!_ongrand){
+            this.ongrand = false
+        }else{
+            this.before_jump = false;
+            this.jump_fre = 0
+        };
         if(!_inside){
-            this.situation = "non"
-        }else if(!_ceiling){
             this.situation = "non"
         };
         if(_inside == true)this.situation = "inside";
         console.log(this.situation,this.ongrand)
-        if(this.situation == "inside" && _ceiling){
-            game = false;
-            fin("天井に激突");
-        }else if(this.situation == "inside"){
+        if(this.situation == "inside"){
             game = false;
             fin("ブロックと衝突");
         }
@@ -305,7 +312,7 @@ const fin = (mes)=>{
 //ジャンプ取得
 window.addEventListener("mousedown",function(){
     if(flag.lv1s){
-        player.jumpcall();
+        jump_ste = true;
     };
     if(!flag.start){
         movestart();
@@ -317,12 +324,21 @@ window.addEventListener('keydown',
     (event) => {
     if (event.key === ' ') {
         if(flag.lv1s){
-            player.jumpcall();
+            jump_ste = true;
         };
         if(!flag.start){
             movestart();
             flag.start = true;
         }
+    };
+});
+window.addEventListener("mouseup",function(){
+    jump_ste = false;
+});
+window.addEventListener('keyup',
+    (event) => {
+    if (event.key === ' ') {
+        jump_ste = false;
     };
 });
 
