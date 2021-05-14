@@ -200,18 +200,19 @@ class Player{
         this.before_jump = false;
         this.jump_fre = 0
     }
-    // jumpcall(){
-    //     if(this.jump_num==false && this.ongrand){
-    //         this.jump_num = this.max_jump;
-    //     }
-    // }
     jump(){
         //ジャンプ処理
         if(jump_ste){
-            if(this.jump_fre<=18 && !this.before_jump){
+            if(this.jump_fre<=10 && !this.before_jump){
                 this.y -= this.jump_speed;
                 this.jump_fre ++;
-            }else if(this.jump_fre>=36){
+            }else if(this.jump_fre<=20 && !this.before_jump){
+                this.y -= this.jump_speed/2;
+                this.jump_fre ++;
+            }else if(this.jump_fre<=28 && !this.before_jump){
+                this.y -= this.jump_speed/4;
+                this.jump_fre ++;
+            }else if(this.jump_fre>=48){
                 this.jump_fre = 0
             }else{
                 this.jump_fre ++;
