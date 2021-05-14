@@ -24,6 +24,22 @@ canvas{
     padding-left: 60%;
     font-size: 30px;
 }
+#button:hover{
+    background-color: #666;
+    color:white;
+}
+#button{
+    width:20%;
+    margin-left: 40%;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    cursor:pointer;
+    background-color: bisque;
+    color:black;
+    font-size: 20px;
+}
 .text-white{
     color:#FFF;
 }

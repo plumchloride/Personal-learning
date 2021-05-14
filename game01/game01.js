@@ -3,8 +3,10 @@ let count = 0;
 let jump_ste = false;
 let flag = {"canv":false,"start":false,"lv1s":false}
 let start_count;
+let time_form_start
 let game = true;
 let map = [];
+let noplate = false;
 
 let death = 0
 
@@ -88,6 +90,7 @@ const tick = ()=>{
 const movestart = () => {
     if(!start_count)start_count = count;
     var step_count = count-start_count;
+    time_form_start = new Time();
     step_count = step_count * fps_speed;
     if(step_count<200){
         //テキスト等を左に
@@ -130,15 +133,34 @@ const lv1 =()=>{
         flag.lv1s = true;
         player = new Player();
     }
-    //床生成
-    map.push(new Block(0,width+100,500))
-    //ブロック生成乱数
-    if(count % 30 == 0){
-        rand = Math.floor((Math.random()*6))
+    //count表示
+    ctx.textAlign= "right";
+    ctx.fillStyle = "#000";
+    ctx.fillText("count:"+time_form_start.get(),width-10,50);
+
+    if(time_form_start.get()<1000 || !time_form_start.get()){
+        map.push(new Block(0,width+700,500));
+    };
+    //30tickに1回
+    if((count*fps_speed) % 30 == 0){
+        //床生成
+        if(time_form_start.get()>1000){
+            rand = Math.floor((Math.random()*3))
+            if(rand == 1){
+                map.push(new Block(width,width+300,500));
+            }else if(noplate){
+                map.push(new Block(width,width+240,500));
+                noplate = false;
+            }
+        };
+        //ブロック生成
+        rand = Math.floor((Math.random()*6));
         if(rand == 0 || rand == 1){
-            map.push(new Block(width,width+300,400))
+            map.push(new Block(width,width+240,400));
         }else if(rand ==2){
-            map.push(new Block(width,width+300,300))
+            map.push(new Block(width,width+240,300));
+        }else{
+            noplate = true;
         }
     };
     //床生成、移動、削除処理
@@ -190,7 +212,7 @@ class Block{
 class Player{
     constructor(){
         this.x = 100;
-        this.y = 500;
+        this.y = 100;
         this.jump_num = false;
         this.jump_speed = fps_speed*15;
         this.fall_speed = fps_speed*15;
@@ -236,6 +258,7 @@ class Player{
         ctx.fillStyle = "#f00";
         ctx.fillRect(this.x, this.y - 40, 20, 20);
     }
+    //ブロックとの衝突を判断
     colide(list,things){
         var _inside = false;
         var _ongrand = false;
@@ -264,11 +287,24 @@ class Player{
             this.situation = "non"
         };
         if(_inside == true)this.situation = "inside";
-        console.log(this.situation,this.ongrand)
         if(this.situation == "inside"){
             game = false;
             fin("ブロックと衝突");
         }
+
+        if(this.y > height + 100){
+            game = false;
+            fin("落下");
+        }
+    }
+}
+
+class Time{
+    constructor(){
+        this.stime = count
+    }
+    get(){
+        return (count-this.stime)*fps_speed
     }
 }
 
@@ -306,6 +342,7 @@ const fin = (mes)=>{
     flag = {"canv":true,"start":false,"lv1s":false}
     start_count = undefined;
     game = true;
+    $button.innerHTML = "stop"
     map = [];
     setTimeout(()=>{load(ctx)},500);
 }
@@ -320,7 +357,6 @@ window.addEventListener("mousedown",function(){
         flag.start = true;
     }
 });
-
 window.addEventListener('keydown',
     (event) => {
     if (event.key === ' ') {
@@ -342,6 +378,19 @@ window.addEventListener('keyup',
         jump_ste = false;
     };
 });
+
+//ストップ用ボタン
+$button = document.getElementById("button")
+$button.addEventListener("click",()=>{
+    if($button.innerHTML =="stop"){
+        $button.innerHTML = "start"
+        game = false;
+    }else{
+        $button.innerHTML = "stop"
+        game = true;
+    }
+})
+
 
 window.onload = on_lode
 setInterval("tick()",1000/fps_in); //アニメーション呼び出し
