@@ -1,14 +1,8 @@
-let canvas,width,height,ctx;
+let canvas,width,height,ctx,player;
 let count = 0;
 let flag = {"canv":false,"start":false,"lv1s":false}
 let start_count;
-//画面設定 100px*100pxごと
-let window_pic = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],]
+let map = [];
 
 //fps 決定部分
 let fps_in = 30;
@@ -121,40 +115,80 @@ const movestart = () => {
 
 //アニメーション：レベル1
 const lv1 =()=>{
-  //初回のみ床の設定
-  if(!flag.lv1s){
-    window_pic[5] = [...Array(20).keys()].map(()=>{return 1});
-    flag.lv1s = true
-  }
-  //設置物処理
-  if(count % 5){
-
-  }
-  //配置物を消す
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, width, height);
-  put_block(window_pic)
-}
-
-
-
-
-
-
-//ブロックの配置
-const put_block = (pic)=>{
-  pic.forEach((cv_,y,notUse)=>{
-    cv_.forEach((cv2,x,notUse2,index)=>{
-      if(x<10){
-        if(cv2==1){
-          ctx.fillStyle = "#666";
-          ctx.fillRect(100*x - count % 5, 100*y, 100, 100);
+    //配置物を消す(lv1は床の削除を行わないため、そのまま)
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, width, height-100);
+    //初回のみ床の設定
+    if(!flag.lv1s){
+        flag.lv1s = true;
+        let plate = new Block(0,width,500);
+        plate.show();
+        flag.lv1s = true;
+        player = new Player();
+    }
+    //ブロック生成乱数
+    if(count % 30 == 0){
+        rand = Math.floor((Math.random()*6))
+        console.log(rand);
+        console.log(map);
+        if(rand == 0 || rand == 1){
+            map.push(new Block(width,width+300,400))
+        }else if(rand ==2){
+            map.push(new Block(width,width+300,300))
         }
-      }
-    })
-  })
+    };
+    //床生成、移動、削除処理
+    relist = [];
+    map.forEach((cv)=>{
+        if(cv.move()==0){
+            relist.push(cv);
+        }
+        cv.show();
+    });
+    map = relist;
+
+    //player処理
+    player.show();
 }
 
+
+
+
+
+class Block{
+    constructor(x,x2,y){
+        this.x = x;
+        this.x2 = x2;
+        this.width = x2-x
+        this.y = y;
+        this.height = 100;
+    }
+    move(){
+        this.x = this.x - fps_speed*5
+        this.x2 = this.x2 - fps_speed*5
+        if(this.x2 <0){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+    show(){
+        ctx.fillStyle = "#666";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+
+
+class Player{
+    constructor(){
+        this.x = 100;
+        this.y = 500;
+    }
+    show(){
+        ctx.fillStyle = "#f00";
+        ctx.fillRect(this.x, this.y - 40, 20, 20);
+    }
+}
 
 //線を引く
 const line_make = (ctx,start_x , start_y,end_x,end_y)=>{
